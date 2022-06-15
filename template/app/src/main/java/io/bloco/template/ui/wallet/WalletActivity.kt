@@ -16,6 +16,8 @@ import io.bloco.template.databinding.ActivityWalletBinding
 import io.bloco.template.ui.BaseActivity
 import wallet.core.jni.*
 
+fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
+
 @AndroidEntryPoint
 class WalletActivity : BaseActivity() {
 
@@ -50,9 +52,9 @@ class WalletActivity : BaseActivity() {
         binding.btnGenerate.setOnClickListener{ onClickGenerate()}
         binding.btnRecovery.setOnClickListener{ onClickRecovery()}
 
-        binding.txtPublicKey.setOnClickListener { onClickText(binding.txtPublicKey, "Public Key") }
-        binding.txtPrivateKey.setOnClickListener { onClickText(binding.txtPrivateKey, "Private Key") }
-        binding.txtRecoveryPhrase.setOnClickListener { onClickText(binding.txtRecoveryPhrase, "Recovery Phrase") }
+        binding.txtPublicKey.setOnClickListener { copyValue(binding.txtPublicKey, "Public Key") }
+        binding.btnCopyPrivateKey.setOnClickListener { copyValue(binding.txtPrivateKey, "Private Key") }
+        binding.btnCopyRecoveryPhrase.setOnClickListener { copyValue(binding.txtRecoveryPhrase, "Recovery Phrase") }
 
         clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
@@ -87,10 +89,11 @@ class WalletActivity : BaseActivity() {
     }
 
     private fun onClickGenerate() {
-        val wallet = HDWallet(128, "")
-        println(wallet.getExtendedPublicKey(Purpose.BIP44, CoinType.ETHEREUM, HDVersion.XPUB))
-        binding.txtPublicKey.text = wallet.getExtendedPublicKey(Purpose.BIP44, CoinType.ETHEREUM, HDVersion.XPUB)
-        binding.txtPrivateKey.text = wallet.getExtendedPrivateKey(Purpose.BIP44, CoinType.ETHEREUM, HDVersion.XPRV)
+        val wallet = HDWallet(256, "")
+        val private = wallet.getKeyForCoin(CoinType.BITCOIN)
+        val pub = private.getPublicKeySecp256k1(true)
+        binding.txtPublicKey.text = pub.description()
+        binding.txtPrivateKey.text = private.data().toHex()
         binding.txtRecoveryPhrase.text = wallet.mnemonic()
         updateUI()
         save()
@@ -101,28 +104,33 @@ class WalletActivity : BaseActivity() {
         updateUI()
     }
 
-    private fun onClickText(view: TextView, name: String) {
+    private fun copyValue(view: TextView, name: String) {
         println(view.text.toString())
         val clip = ClipData.newPlainText("clipboard", view.text.toString())
 //        clipboard.text = view.text.toString()
         clipboard.setPrimaryClip(clip)
-        println("Pasted: " + clipboard.text)
-//        showSnackBar("$name was copied to clipboard.")
+//        println("Pasted: " + clipboard.text)
+        showSnackBar("$name was copied to clipboard.")
     }
 
     private fun updateUI() {
-        if (binding.txtPublicKey.text.isEmpty()) {
-            binding.layoutPublicKey.visibility = View.GONE
-            binding.btnRecovery.visibility = View.GONE
-        } else {
-            binding.layoutPublicKey.visibility = View.VISIBLE
-            binding.btnRecovery.visibility = View.VISIBLE
-        }
-
         if (showRecovery) {
+            binding.btnRecovery.text = getString(R.string.hide_recovery)
             binding.layoutRecover.visibility = View.VISIBLE
+            binding.btnGenerate.visibility = View.GONE
+            binding.layoutPublicKey.visibility = View.GONE
         } else {
+            binding.btnRecovery.text = getString(R.string.btn_recovery)
+            binding.btnGenerate.visibility = View.VISIBLE
+            binding.layoutPublicKey.visibility = View.VISIBLE
+
             binding.layoutRecover.visibility = View.GONE
+            if (binding.txtPublicKey.text.isEmpty()) {
+                binding.btnRecovery.visibility = View.GONE
+            } else {
+                binding.layoutPublicKey.visibility = View.VISIBLE
+                binding.btnRecovery.visibility = View.VISIBLE
+            }
         }
     }
 

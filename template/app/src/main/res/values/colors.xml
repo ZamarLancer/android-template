@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bloco_pink">#E91EB6</color>
+    <color name="bloco_pink">#E3144F</color>
     <color name="bloco_green">#00d79f</color>
     <color name="bloco_cyan">#00E0C7</color>
     <color name="bloco_light_blue">#9ED7D7</color>

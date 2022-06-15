@@ -56,18 +56,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/lbl_private_key"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lbl_private_key" />
-
-            <TextView
-                android:id="@+id/txt_private_key"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lines="3" />
-
-            <TextView
                 android:id="@+id/lbl_recovery_phrase"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,8 +66,34 @@
                 android:id="@+id/txt_recovery_phrase"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:lines="4" />
+
+            <Button
+                android:id="@+id/btn_copy_recovery_phrase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:lines="5" />
+                android:text="@string/copy_to_clipboard"/>
+
+            <TextView
+                android:id="@+id/lbl_private_key"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_private_key" />
+
+            <TextView
+                android:id="@+id/txt_private_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="4" />
+
+            <Button
+                android:id="@+id/btn_copy_private_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/copy_to_clipboard"/>
+
+
         </LinearLayout>
 
 
