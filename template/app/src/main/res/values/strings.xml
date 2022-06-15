@@ -1,6 +1,11 @@
 <resources>
-    <string name="app_name">Base Template</string>
+    <string name="app_name">Web3 Wallet</string>
     <string name="error_message">Can\'t decrease more</string>
     <string name="counter">Counter:</string>
     <string name="counter_default_value">0</string>
+    <string name="btn_generate">Create Wallet</string>
+    <string name="lbl_public_key">Public Key</string>
+    <string name="btn_recovery">Recovery</string>
+    <string name="lbl_private_key">Private Key</string>
+    <string name="lbl_recovery_phrase">Recovery Phrase</string>
 </resources>

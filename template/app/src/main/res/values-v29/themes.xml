@@ -5,7 +5,7 @@
     <style name="Base.AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <!-- Optional, but recommended for full edge-to-edge rendering-->
-        <item name="android:statusBarColor">@color/bloco_green</item>
+        <item name="android:statusBarColor">@color/bloco_pink</item>
     </style>
 
 </resources>
