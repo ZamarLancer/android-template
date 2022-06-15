@@ -1,7 +1,11 @@
 package io.bloco.template.ui.wallet
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import androidx.security.crypto.MasterKeys
@@ -19,6 +23,7 @@ class WalletActivity : BaseActivity() {
     private var showRecovery = false
 
     private lateinit var sharedPreferences: EncryptedSharedPreferences
+    private lateinit var clipboard: ClipboardManager
 
     init {
         System.loadLibrary("TrustWalletCore")
@@ -27,7 +32,9 @@ class WalletActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val masterKey = MasterKey.Builder(applicationContext).build()
+        val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+        val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+        val masterKey = MasterKey(applicationContext, masterKeyAlias)
 
         sharedPreferences = EncryptedSharedPreferences.create(
             applicationContext,
@@ -42,6 +49,12 @@ class WalletActivity : BaseActivity() {
 
         binding.btnGenerate.setOnClickListener{ onClickGenerate()}
         binding.btnRecovery.setOnClickListener{ onClickRecovery()}
+
+        binding.txtPublicKey.setOnClickListener { onClickText(binding.txtPublicKey, "Public Key") }
+        binding.txtPrivateKey.setOnClickListener { onClickText(binding.txtPrivateKey, "Private Key") }
+        binding.txtRecoveryPhrase.setOnClickListener { onClickText(binding.txtRecoveryPhrase, "Recovery Phrase") }
+
+        clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         load()
     }
@@ -68,8 +81,8 @@ class WalletActivity : BaseActivity() {
     }
 
 
-    private fun showErrorSnackBar() {
-        Snackbar.make(binding.coordinatorLayout, R.string.error_message, Snackbar.LENGTH_SHORT)
+    private fun showSnackBar(message: String) {
+        Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_SHORT)
             .show()
     }
 
@@ -86,6 +99,15 @@ class WalletActivity : BaseActivity() {
     private fun onClickRecovery() {
         showRecovery = !showRecovery
         updateUI()
+    }
+
+    private fun onClickText(view: TextView, name: String) {
+        println(view.text.toString())
+        val clip = ClipData.newPlainText("clipboard", view.text.toString())
+//        clipboard.text = view.text.toString()
+        clipboard.setPrimaryClip(clip)
+        println("Pasted: " + clipboard.text)
+//        showSnackBar("$name was copied to clipboard.")
     }
 
     private fun updateUI() {
